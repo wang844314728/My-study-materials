@@ -479,12 +479,17 @@ git commit -m "feat: add note landing pages"
 **Files:**
 - Create: `.vitepress/theme/index.ts`
 - Create: `.vitepress/theme/custom.css`
+- Modify only for the verified build compatibility fix: `LangChain_1.2/10-RAG.md`
 
 **Interfaces:**
 - Consumes: `HomePage.vue`，后续注册 `MermaidDiagram.vue`。
 - Produces: VitePress `Theme` 导出、系统字体栈、统一颜色与排版 tokens、首页和文档页响应式样式。
 
-- [ ] **Step 1: 创建主题入口**
+- [ ] **Step 1: 修复已复现的 Vue Markdown 标签解析错误**
+
+Use the existing `npm run docs:build` failure as RED evidence: Vue reports an unclosed element because prose at `LangChain_1.2/10-RAG.md:2142` contains raw `<h1>` and `<h2>` examples. Change only that sentence so the two examples are inline code: `` `<h1>` `` and `` `<h2>` ``. Do not change the fenced HTML example below it. Re-run `npm run docs:build`; after this one-line fix, any later failure must be recorded separately and fixed only when it is another verified Markdown compatibility issue.
+
+- [ ] **Step 2: 创建主题入口**
 
 Create `.vitepress/theme/index.ts`:
 
@@ -503,7 +508,7 @@ export default {
 } satisfies Theme
 ```
 
-- [ ] **Step 2: 定义克制的视觉 tokens**
+- [ ] **Step 3: 定义克制的视觉 tokens**
 
 Start `.vitepress/theme/custom.css` with fixed system fonts and one warm-copper accent:
 
@@ -530,7 +535,7 @@ Start `.vitepress/theme/custom.css` with fixed system fonts and one warm-copper 
 }
 ```
 
-- [ ] **Step 3: 实现首页、正文、媒体和移动端样式**
+- [ ] **Step 4: 实现首页、正文、媒体和移动端样式**
 
 Add focused selectors for `.notes-home`, `.notes-category-grid`, `.notes-category`, `.notes-reading-list`, `.vp-doc`, `.vp-doc table`, `.vp-doc img`, `.vp-doc blockquote`, `.vp-doc div[class*='language-']`, `.mermaid-shell`, and `@media (max-width: 768px)`.
 
@@ -555,7 +560,7 @@ Required measurable rules:
 
 Do not add gradients, backdrop filters, looping keyframes, blur blobs, emoji icons, or shadows stronger than `0 8px 24px rgb(0 0 0 / 8%)`.
 
-- [ ] **Step 4: 运行构建级样式检查**
+- [ ] **Step 5: 运行构建级样式检查**
 
 Run:
 
@@ -566,10 +571,10 @@ npm run docs:build
 
 Expected: first command has no matches; build exits `0`.
 
-- [ ] **Step 5: 提交主题基础**
+- [ ] **Step 6: 提交主题基础**
 
 ```bash
-git add .vitepress/theme/index.ts .vitepress/theme/custom.css
+git add .vitepress/theme/index.ts .vitepress/theme/custom.css LangChain_1.2/10-RAG.md
 git diff --cached --check
 git commit -m "feat: add editorial documentation theme"
 ```
