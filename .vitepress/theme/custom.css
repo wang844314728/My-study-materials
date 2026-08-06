@@ -4,6 +4,7 @@
   --vp-c-brand-1: #9a5a2a;
   --vp-c-brand-2: #7f4822;
   --vp-c-brand-3: #6c3d1d;
+  --vp-c-brand-soft: rgb(154 90 42 / 14%);
   --vp-c-bg: #fbfaf7;
   --vp-c-bg-soft: #f4f1eb;
   --vp-c-divider: #ded9d0;
@@ -14,6 +15,7 @@
 .dark {
   --vp-c-brand-1: #d69a68;
   --vp-c-brand-2: #e2ad82;
+  --vp-c-brand-soft: rgb(214 154 104 / 16%);
   --vp-c-bg: #171716;
   --vp-c-bg-soft: #20201e;
   --vp-c-divider: #363530;
