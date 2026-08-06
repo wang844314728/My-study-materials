@@ -66,7 +66,7 @@ LangGraph 的图运行过程基于 Superstep（超步） 来组织和推进。Su
 
 ![image-20260521160659113](assets/image-20260521160659113.png)
 
-完整的运行流程查看 [index.html](langgraph-runtime-viz/index.html) ，双击在浏览器打开即可。
+完整的运行流程查看 [index.html](/langgraph-runtime-viz/) ，双击在浏览器打开即可。
 
 其中和Checkpoint相关的部分，学习相关内容后再看。
 
