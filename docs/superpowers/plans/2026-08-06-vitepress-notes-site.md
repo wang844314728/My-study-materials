@@ -693,11 +693,12 @@ Run:
 ```bash
 npm test
 npm run docs:build
-rg -l "MermaidDiagram" .vitepress/dist/LangGraph | wc -l
+test -f .vitepress/dist/LangGraph/01-LangGraph基础入门.html
+test -f .vitepress/dist/LangGraph/02-LangGraph控制流与节点执行.html
 rg -l "katex" .vitepress/dist/assets | head -1
 ```
 
-Expected: tests pass；构建退出 `0`；至少两个 LangGraph 产物引用 Mermaid 组件；构建资产包含 KaTeX 样式。
+Expected: tests pass；构建退出 `0`；两篇包含 Mermaid 的 LangGraph 文章产物存在；构建资产包含 KaTeX 样式。SVG 实际渲染在 Task 9 浏览器验收中确认。
 
 - [ ] **Step 6: 提交 Markdown 增强**
 
