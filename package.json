@@ -1,0 +1,25 @@
+{
+  "name": "yooks-notes",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "docs:generate": "node scripts/generate-sidebar.mjs",
+    "docs:validate": "node scripts/validate-content.mjs --require-pages",
+    "docs:dev": "npm run docs:generate && vitepress dev .",
+    "docs:build": "npm run docs:generate && npm run docs:validate && vitepress build .",
+    "docs:preview": "vitepress preview ."
+  },
+  "devDependencies": {
+    "markdown-it": "^14.2.0",
+    "vitepress": "^1.6.4"
+  },
+  "dependencies": {
+    "@mdit/plugin-katex": "^1.0.2",
+    "katex": "^0.16.47",
+    "mermaid": "^11.16.1"
+  }
+}
