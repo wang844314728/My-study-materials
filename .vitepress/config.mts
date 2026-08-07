@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { katex } from '@mdit/plugin-katex'
+import { configureMarkdown } from './markdown.mjs'
 import { SITE, normalizeBase } from './site'
 import { orderedArticleLinks, sidebar } from './sidebar'
 
@@ -15,7 +15,7 @@ export default defineConfig({
   markdown: {
     lineNumbers: true,
     config(md) {
-      md.use(katex, { delimiters: 'dollars' })
+      configureMarkdown(md)
     }
   },
   transformPageData(pageData) {

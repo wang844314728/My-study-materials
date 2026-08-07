@@ -258,12 +258,15 @@ body {
 }
 
 .mermaid-shell {
+  width: 100%;
   margin: 24px 0;
   padding: 20px;
   overflow-x: auto;
   border: 1px solid var(--vp-c-divider);
   border-radius: 4px;
   background-color: var(--vp-c-bg-soft);
+  box-sizing: border-box;
+  color-scheme: light;
 }
 
 .mermaid-shell svg {
@@ -271,6 +274,19 @@ body {
   max-width: 100%;
   height: auto;
   margin: 0 auto;
+}
+
+.dark .mermaid-shell {
+  border-color: var(--vp-c-divider);
+  background-color: var(--vp-c-bg-soft);
+  color-scheme: dark;
+}
+
+.mermaid-shell__error {
+  margin-top: 12px;
+  color: var(--vp-c-danger-1);
+  font-size: 0.875rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
