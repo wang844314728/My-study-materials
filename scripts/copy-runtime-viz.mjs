@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 const hrefAttribute = /(?:^|\s)href\s*=\s*(?:"([^\"]*)"|'([^']*)'|([^\s>]+))/i
 const remoteFontHref = /^(?:https?:)?\/\/fonts\.(?:googleapis|gstatic)\.com(?:[:/?#]|$)/i
 const backLink = '<a class="back-to-notes" href="../LangGraph/">返回 LangGraph 笔记</a>'
-const backLinkCss = '.back-to-notes{position:fixed;top:1rem;left:1rem;z-index:10;padding:.5rem .75rem;border-radius:.375rem;background:#fff;color:#1f2937;font:500 14px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-decoration:none;box-shadow:0 1px 3px #0003}.back-to-notes:hover{background:#f3f4f6}'
+const backLinkCss = '.back-to-notes{position:fixed;top:1rem;left:1rem;z-index:10;padding:.5rem .75rem;border-radius:.375rem;background:#fff;color:#1f2937;font:500 14px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-decoration:none;box-shadow:0 1px 3px #0003}.back-to-notes:hover{background:#f3f4f6}@media(max-width:640px){.page-header{padding-top:72px}}'
 
 function readComment(source, start) {
   if (!source.startsWith('<!--', start)) return undefined

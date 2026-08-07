@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { buildRuntimeViz } from '../scripts/copy-runtime-viz.mjs'
 
+const runtimeVizSourceUrl = new URL('../LangGraph/langgraph-runtime-viz/index.html', import.meta.url)
+
 test('runtime viz publish copy is self-contained and links back relatively', () => {
   const source = '<head><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=X"></head><body><main>viz</main></body>'
   const result = buildRuntimeViz(source)
@@ -11,18 +13,31 @@ test('runtime viz publish copy is self-contained and links back relatively', () 
   assert.match(result, /返回 LangGraph 笔记/)
 })
 
+test('runtime viz source keeps its original standalone mobile header spacing', async () => {
+  const source = await readFile(runtimeVizSourceUrl, 'utf8')
+  const sourceMobileHeaderPadding = /@media\s*\(max-width:\s*640px\)\s*\{[\s\S]*?\.page-header\s*\{\s*padding:\s*([\d.]+)px/.exec(source)
+
+  assert.ok(sourceMobileHeaderPadding, 'expected the source mobile page-header padding rule')
+  assert.equal(Number(sourceMobileHeaderPadding[1]), 32)
+  assert.doesNotMatch(source, /\.page-header\s*\{[^}]*padding-top\s*:/)
+})
+
 test('published runtime viz keeps the mobile heading below the fixed back link', async () => {
-  const source = await readFile(new URL('../LangGraph/langgraph-runtime-viz/index.html', import.meta.url), 'utf8')
+  const source = await readFile(runtimeVizSourceUrl, 'utf8')
   const result = buildRuntimeViz(source)
-  const mobileHeaderPadding = /@media\s*\(max-width:\s*640px\)\s*\{[\s\S]*?\.page-header\s*\{\s*padding:\s*([\d.]+)px/.exec(result)
+  const publishedMobileHeaderPadding = /@media\(max-width:640px\)\{\.page-header\{padding-top:([\d.]+)px\}\}/.exec(result)
 
   assert.match(result, /\.back-to-notes\{position:fixed;top:1rem;/)
-  assert.ok(mobileHeaderPadding, 'expected a mobile page-header padding rule')
+  assert.ok(publishedMobileHeaderPadding, 'expected a publication-only mobile page-header padding rule')
+  assert.ok(
+    result.indexOf(publishedMobileHeaderPadding[0]) > result.indexOf('@media (max-width: 640px)'),
+    'expected the publication-only mobile rule after the source mobile rule'
+  )
 
   const fixedLinkBottom = 16 + 8 + (14 * 1.2) + 8
   const minimumGap = 16
   const minimumHeaderTop = Math.ceil(fixedLinkBottom + minimumGap)
-  const headerTop = Number(mobileHeaderPadding[1])
+  const headerTop = Number(publishedMobileHeaderPadding[1])
 
   assert.ok(
     headerTop >= minimumHeaderTop,

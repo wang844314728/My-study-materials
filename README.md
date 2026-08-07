@@ -37,6 +37,8 @@ npm run docs:dev
 
 不要手工编辑 `.vitepress/sidebar.ts`，它由 `npm run docs:generate` 自动生成；`docs:dev` 和 `docs:build` 都会调用该脚本。
 
+内容校验把最初导入的 30 篇课程记录在 `scripts/content-baseline.mjs` 中，并把 401 处本地图片引用作为最低基线。新增课程和有效图片引用不会导致校验失败；删除或重命名基线课程时，需要明确更新基线清单。所有仍被 Markdown 引用的本地图片都必须存在。
+
 ## 修改站点名称、副标题和 GitHub 链接
 
 集中修改 [`.vitepress/site.ts`](.vitepress/site.ts) 中的 `SITE`：

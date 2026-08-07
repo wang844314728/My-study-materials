@@ -1,7 +1,3 @@
-<script lang="ts">
-let mermaidInitialized = false
-</script>
-
 <script setup lang="ts">
 import { withBase } from 'vitepress'
 import { SITE } from '../../site'

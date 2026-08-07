@@ -251,6 +251,21 @@ body {
   color: var(--vp-c-text-2);
 }
 
+.vp-doc .task-list,
+.vp-doc .task-list-item {
+  list-style: none;
+}
+
+.vp-doc .task-list-item-checkbox {
+  width: 1rem;
+  height: 1rem;
+  margin: 0 0.5rem 0 0;
+  vertical-align: -0.125em;
+  accent-color: var(--vp-c-brand-1);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
 .vp-doc div[class*='language-'] {
   border: 1px solid var(--vp-c-divider);
   border-radius: 4px;
@@ -280,6 +295,27 @@ body {
   border-color: var(--vp-c-divider);
   background-color: var(--vp-c-bg-soft);
   color-scheme: dark;
+}
+
+.mermaid-shell__source {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  background-color: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.mermaid-shell__source code {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
 }
 
 .mermaid-shell__error {

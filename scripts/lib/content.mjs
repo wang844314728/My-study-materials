@@ -171,12 +171,47 @@ export function buildSidebar(entriesByCategory) {
 
   return Object.fromEntries(CONTENT_CATEGORIES.map((category) => {
     const entries = groupedEntries.get(category.key) ?? []
-    const articles = entries.filter((entry) => !entry.isIndex)
     return [category.path, [
       { text: category.text, link: category.path },
-      ...articles.map((entry) => ({ text: entry.title, link: entry.route }))
+      ...buildDirectoryItems(createDirectoryTree(entries))
     ]]
   }))
+}
+
+function createDirectoryTree(entries) {
+  const root = { name: '', index: null, articles: [], directories: new Map() }
+
+  for (const entry of entries) {
+    const pathParts = entry.relativePath.split('/')
+    pathParts.pop()
+    let directory = root
+
+    for (const name of pathParts) {
+      if (!directory.directories.has(name)) {
+        directory.directories.set(name, { name, index: null, articles: [], directories: new Map() })
+      }
+      directory = directory.directories.get(name)
+    }
+
+    if (entry.isIndex) directory.index = entry
+    else directory.articles.push(entry)
+  }
+
+  return root
+}
+
+function buildDirectoryItems(directory) {
+  const articles = directory.articles.map((entry) => ({ text: entry.title, link: entry.route }))
+  const groups = [...directory.directories.values()].map((child) => {
+    const group = {
+      text: child.index?.title ?? extractTitle('', child.name),
+      items: buildDirectoryItems(child)
+    }
+    if (child.index) group.link = child.index.route
+    return group
+  })
+
+  return [...articles, ...groups]
 }
 
 function normalizeCategoryEntries(entriesByCategory) {

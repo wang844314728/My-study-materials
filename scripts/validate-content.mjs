@@ -7,6 +7,7 @@ import {
   scanContent,
   validateLocalAssets
 } from './lib/content.mjs'
+import { CONTENT_BASELINE } from './content-baseline.mjs'
 
 const CATEGORY_DIRECTORIES = {
   python: 'python',
@@ -14,7 +15,10 @@ const CATEGORY_DIRECTORIES = {
   langgraph: 'LangGraph'
 }
 
-export async function validateContent(rootDir = process.cwd(), { requirePages = false } = {}) {
+export async function validateContent(rootDir = process.cwd(), {
+  requirePages = false,
+  baseline = CONTENT_BASELINE
+} = {}) {
   const entriesByCategory = await Promise.all(CONTENT_CATEGORIES.map(async (category) => {
     const entries = await scanContent(join(rootDir, CATEGORY_DIRECTORIES[category.key]), category)
     return entries
@@ -24,10 +28,16 @@ export async function validateContent(rootDir = process.cwd(), { requirePages = 
   const imageReferences = lessons.flatMap((entry) => localImageReferences(entry.source))
   const missingAssets = validateLocalAssets(lessons)
   const duplicateRoutes = findDuplicates(allEntries.map((entry) => entry.route))
+  const lessonPaths = new Set(lessons.map((entry) => `${CATEGORY_DIRECTORIES[entry.categoryKey]}/${entry.relativePath}`))
   const failures = []
 
-  if (lessons.length !== 30) failures.push(`Expected 30 lesson Markdown files, found ${lessons.length}.`)
-  if (imageReferences.length !== 401) failures.push(`Expected 401 local image references, found ${imageReferences.length}.`)
+  for (const lessonPath of baseline.lessonPaths) {
+    if (!lessonPaths.has(lessonPath)) failures.push(`Missing baseline lesson: ${lessonPath}.`)
+  }
+  if (imageReferences.length < baseline.minimumImageReferenceCount) {
+    const referenceLabel = baseline.minimumImageReferenceCount === 1 ? 'reference' : 'references'
+    failures.push(`Expected at least ${baseline.minimumImageReferenceCount} local image ${referenceLabel}, found ${imageReferences.length}.`)
+  }
   for (const missing of missingAssets) failures.push(`Missing local image "${missing.reference}" in ${missing.filePath}.`)
   for (const route of duplicateRoutes) failures.push(`Duplicate route: ${route}.`)
 
