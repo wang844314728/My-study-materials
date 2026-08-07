@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { buildRuntimeViz } from '../scripts/copy-runtime-viz.mjs'
 
@@ -8,6 +9,25 @@ test('runtime viz publish copy is self-contained and links back relatively', () 
   assert.doesNotMatch(result, /fonts\.googleapis\.com/)
   assert.match(result, /href="\.\.\/LangGraph\/"/)
   assert.match(result, /返回 LangGraph 笔记/)
+})
+
+test('published runtime viz keeps the mobile heading below the fixed back link', async () => {
+  const source = await readFile(new URL('../LangGraph/langgraph-runtime-viz/index.html', import.meta.url), 'utf8')
+  const result = buildRuntimeViz(source)
+  const mobileHeaderPadding = /@media\s*\(max-width:\s*640px\)\s*\{[\s\S]*?\.page-header\s*\{\s*padding:\s*([\d.]+)px/.exec(result)
+
+  assert.match(result, /\.back-to-notes\{position:fixed;top:1rem;/)
+  assert.ok(mobileHeaderPadding, 'expected a mobile page-header padding rule')
+
+  const fixedLinkBottom = 16 + 8 + (14 * 1.2) + 8
+  const minimumGap = 16
+  const minimumHeaderTop = Math.ceil(fixedLinkBottom + minimumGap)
+  const headerTop = Number(mobileHeaderPadding[1])
+
+  assert.ok(
+    headerTop >= minimumHeaderTop,
+    `expected mobile page-header top padding >= ${minimumHeaderTop}px, got ${headerTop}px`
+  )
 })
 
 test('keeps non-font markup unchanged while adding the back-link CSS to an existing style', () => {
