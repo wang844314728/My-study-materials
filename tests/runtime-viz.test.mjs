@@ -34,3 +34,18 @@ test('does not transform link-like or closing-style text inside JavaScript', () 
   assert.match(result, new RegExp(script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   assert.match(result, /<head><style>\.back-to-notes\{[^<]*<\/style><\/head>/)
 })
+
+test('uses only the href attribute when deciding whether to remove a link', () => {
+  const source = '<head><link data-href="https://fonts.googleapis.com/x" href="/local.css"></head><body>viz</body>'
+  const result = buildRuntimeViz(source)
+  assert.match(result, /<link data-href="https:\/\/fonts\.googleapis\.com\/x" href="\/local\.css">/)
+})
+
+test('preserves comments and skips their link and structural lookalikes', () => {
+  const comment = '<!-- <link href="https://fonts.googleapis.com/x"> <body>comment</body> </head> -->'
+  const source = `<head>${comment}</head><body>viz</body>`
+  const result = buildRuntimeViz(source)
+  assert.match(result, new RegExp(comment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+  assert.match(result, /<head><!--[\s\S]*<\/head>/)
+  assert.match(result, /<body><a class="back-to-notes" href="\.\.\/LangGraph\/">返回 LangGraph 笔记<\/a>viz<\/body>/)
+})

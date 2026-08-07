@@ -2,10 +2,18 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const hrefAttribute = /\bhref\s*=\s*(?:"([^\"]*)"|'([^']*)'|([^\s>]+))/i
+const hrefAttribute = /(?:^|\s)href\s*=\s*(?:"([^\"]*)"|'([^']*)'|([^\s>]+))/i
 const remoteFontHref = /^(?:https?:)?\/\/fonts\.(?:googleapis|gstatic)\.com(?:[:/?#]|$)/i
 const backLink = '<a class="back-to-notes" href="../LangGraph/">返回 LangGraph 笔记</a>'
 const backLinkCss = '.back-to-notes{position:fixed;top:1rem;left:1rem;z-index:10;padding:.5rem .75rem;border-radius:.375rem;background:#fff;color:#1f2937;font:500 14px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-decoration:none;box-shadow:0 1px 3px #0003}.back-to-notes:hover{background:#f3f4f6}'
+
+function readComment(source, start) {
+  if (!source.startsWith('<!--', start)) return undefined
+
+  const close = source.indexOf('-->', start + 4)
+  const end = close === -1 ? source.length - 1 : close + 2
+  return { start, end, markup: source.slice(start, end + 1) }
+}
 
 function readTag(source, start) {
   let quote
@@ -52,6 +60,12 @@ function findTag(source, name, closing) {
     const start = source.indexOf('<', cursor)
     if (start === -1) return undefined
 
+    const comment = readComment(source, start)
+    if (comment) {
+      cursor = comment.end + 1
+      continue
+    }
+
     const tag = readTag(source, start)
     if (!tag) {
       cursor = start + 1
@@ -77,6 +91,13 @@ function removeRemoteFontLinks(source) {
   while (cursor < source.length) {
     const start = source.indexOf('<', cursor)
     if (start === -1) return result + source.slice(cursor)
+
+    const comment = readComment(source, start)
+    if (comment) {
+      result += source.slice(cursor, comment.end + 1)
+      cursor = comment.end + 1
+      continue
+    }
 
     const tag = readTag(source, start)
     if (!tag) {
